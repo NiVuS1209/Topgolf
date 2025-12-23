@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Topgolf Familien-Event 🎄</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0b2d1c;
+      color: white;
+    }
+    header {
+      background: linear-gradient(135deg, #1db954, #0f5132);
+      padding: 40px 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    header p {
+      margin-top: 10px;
+      font-size: 1.2rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .card {
+      background: #143d2b;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #1db954;
+    }
+    .dates label {
+      display: block;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    button {
+      background: #1db954;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 999px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background: #17a64a;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      opacity: 0.8;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🎄 Topgolf Familien-Weihnachtsgeschenk 🎄</h1>
+  <p>Lasst uns gemeinsam einen Termin finden!</p>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h2>🎁 Das Geschenk</h2>
+    <p>
+      Zu Weihnachten lade ich euch zu einem gemeinsamen <strong>Topgolf-Erlebnis</strong> ein!
+      Spaß, Essen und eine gute Zeit zusammen 🎯⛳
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>📅 Termin-Abstimmung</h2>
+    <p>Bitte wählt den Termin aus, der euch am besten passt:</p>
+
+    <form onsubmit="saveVote(event)">
+      <div class="dates">
+        <label><input type="radio" name="date" value="10. Januar" required /> 10. Januar</label>
+        <label><input type="radio" name="date" value="17. Januar" /> 17. Januar</label>
+        <label><input type="radio" name="date" value="24. Januar" /> 24. Januar</label>
+      </div>
+      <button type="submit">Abstimmen</button>
+    </form>
+
+    <p id="result"></p>
+  </div>
+</div>
+
+<footer>
+  ❤️ Gemacht als Weihnachtsüberraschung für die Familie
+</footer>
+
+<script>
+  function saveVote(event) {
+    event.preventDefault();
+    const date = document.querySelector('input[name="date"]:checked').value;
+    document.getElementById('result').innerText =
+      'Danke für deine Stimme! Du hast gewählt: ' + date + ' 🎉';
+  }
+</script>
+
+</body>
+</html>
