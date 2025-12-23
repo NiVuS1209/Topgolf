@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Topgolf Abstimmung ⛳</title>
+  <title>Topgolf Abstimmung 🎄</title>
   <style>
     body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: white; overflow-y: auto; }
 
@@ -55,8 +55,18 @@
   <div class="card">
     <h2>📅 Termin-Abstimmung</h2>
     <form>
-      <label>Dein Name:<br><input type="text" id="name" required style="padding:8px;border-radius:8px;border:none;margin:10px 0;width:100%;max-width:300px;"></label>
-      <label>Neuen Termin hinzufügen:<br><input type="text" id="newDate" placeholder="z.B. 31. Januar"></label>
+      <!-- Namensfeld -->
+      <label style="display:block; margin-bottom:15px;">
+        Dein Name:<br>
+        <input type="text" id="name" required style="padding:8px;border-radius:8px;border:none;width:100%;max-width:300px;">
+      </label>
+
+      <!-- Neues Terminfeld, eine Zeile weiter unten -->
+      <label style="display:block; margin-top:20px; margin-bottom:15px;">
+        Neuen Termin hinzufügen:<br>
+        <input type="text" id="newDate" placeholder="z.B. 31. Januar" style="padding:8px;border-radius:8px;border:none;width:100%;max-width:300px;">
+      </label>
+
       <button type="button" id="addDate">Hinzufügen</button>
       <div class="dates" id="datesContainer"></div>
       <button type="submit">Abstimmen</button>
