@@ -5,111 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Topgolf Familien-Event 🎄</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #0b2d1c;
-      color: white;
-    }
-    header {
-      background: linear-gradient(135deg, #1db954, #0f5132);
-      padding: 40px 20px;
-      text-align: center;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 2.5rem;
-    }
-    header p {
-      margin-top: 10px;
-      font-size: 1.2rem;
-    }
-    .container {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-    .card {
-      background: #143d2b;
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 30px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    .card h2 {
-      margin-top: 0;
-      color: #1db954;
-    }
-    .dates label {
-      display: block;
-      margin-bottom: 10px;
-      cursor: pointer;
-    }
-    button {
-      background: #1db954;
-      border: none;
-      padding: 14px 24px;
-      border-radius: 999px;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-    button:hover {
-      background: #17a64a;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      opacity: 0.8;
-      font-size: 0.9rem;
-    }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #0b2d1c; color: white; }
+    header { background: linear-gradient(135deg, #1db954, #0f5132); padding: 40px 20px; text-align: center; }
+    header h1 { margin: 0; font-size: 2.5rem; }
+    header p { margin-top: 10px; font-size: 1.2rem; }
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    .card { background: #143d2b; border-radius: 16px; padding: 24px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .card h2 { margin-top: 0; color: #1db954; }
+    .dates label { display: block; margin-bottom: 10px; cursor: pointer; }
+    button { background: #1db954; border: none; padding: 14px 24px; border-radius: 999px; font-size: 1rem; cursor: pointer; margin-top: 20px; }
+    button:hover { background: #17a64a; }
+    #clearVotes { background: #c0392b; }
+    footer { text-align: center; padding: 20px; opacity: 0.8; font-size: 0.9rem; }
   </style>
 </head>
 <body>
-
 <header>
   <h1>🎄 Topgolf Familien-Weihnachtsgeschenk 🎄</h1>
-  <p>Lasst uns gemeinsam einen Termin finden!</p>
+  <p>Lasst uns gemeinsam Termine auswählen!</p>
 </header>
-
 <div class="container">
   <div class="card">
     <h2>🎁 Das Geschenk</h2>
-    <p>
-      Zu Weihnachten lade ich euch zu einem gemeinsamen <strong>Topgolf-Erlebnis</strong> ein!
-      Spaß, Essen und eine gute Zeit zusammen 🎯⛳
-    </p>
+    <p>Zu Weihnachten lade ich euch zu einem gemeinsamen <strong>Topgolf-Erlebnis</strong> ein! Spaß, Essen und eine gute Zeit zusammen 🎯⛳</p>
   </div>
 
   <div class="card">
     <h2>📅 Termin-Abstimmung</h2>
-    <p>Bitte wählt den Termin aus, der euch am besten passt:</p>
-
-    <form onsubmit="saveVote(event)">
-      <label>
-        Dein Name:<br />
-        <input type="text" id="name" required style="padding:8px;border-radius:8px;border:none;margin:10px 0;width:100%;max-width:300px;" />
-      </label>
+    <p>Bitte wählt die Termine aus, die euch passen:</p>
+    <form>
+      <label>Dein Name:<br><input type="text" id="name" required style="padding:8px;border-radius:8px;border:none;margin:10px 0;width:100%;max-width:300px;"></label>
       <div class="dates">
-        <label><input type="radio" name="date" value="10. Januar" required /> 10. Januar</label>
-        <label><input type="radio" name="date" value="17. Januar" /> 17. Januar</label>
-        <label><input type="radio" name="date" value="24. Januar" /> 24. Januar</label>
+        <label><input type="checkbox" name="dates" value="10. Januar"> 10. Januar</label>
+        <label><input type="checkbox" name="dates" value="17. Januar"> 17. Januar</label>
+        <label><input type="checkbox" name="dates" value="24. Januar"> 24. Januar</label>
       </div>
       <button type="submit">Abstimmen</button>
     </form>
-
     <h3>📝 Bisherige Stimmen:</h3>
     <ul id="votes"></ul>
+    <button id="clearVotes">Alle Abstimmungen löschen</button>
   </div>
 </div>
-
-<footer>
-  ❤️ Gemacht als Weihnachtsüberraschung für die Familie
-</footer>
-
+<footer>❤️ Gemacht als Weihnachtsüberraschung für die Familie</footer>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBt5gN3qzxY8g9RALFca9XbuD_0b4UeOx8",
@@ -129,27 +70,28 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('name').value;
-    const date = document.querySelector('input[name="date"]:checked').value;
+    const selectedDates = Array.from(document.querySelectorAll('input[name="dates"]:checked')).map(el => el.value);
+    if (selectedDates.length === 0) { alert('Bitte wähle mindestens einen Termin aus.'); return; }
 
-    await addDoc(collection(db, 'votes'), {
-      name,
-      date,
-      created: serverTimestamp()
-    });
-
+    await addDoc(collection(db, 'votes'), { name, dates: selectedDates, created: serverTimestamp() });
     form.reset();
   });
 
   const q = query(collection(db, 'votes'), orderBy('created'));
   onSnapshot(q, (snapshot) => {
     votesList.innerHTML = '';
-    snapshot.forEach(doc => {
+    snapshot.forEach(docSnap => {
       const li = document.createElement('li');
-      li.textContent = doc.data().name + ' → ' + doc.data().date;
+      li.textContent = docSnap.data().name + ' → ' + docSnap.data().dates.join(', ');
       votesList.appendChild(li);
     });
   });
-</script>
 
+  document.getElementById('clearVotes').addEventListener('click', async () => {
+    if (!confirm('Willst du wirklich ALLE Abstimmungen löschen?')) return;
+    const snapshot = await getDocs(collection(db, 'votes'));
+    snapshot.forEach(async (docSnap) => { await deleteDoc(doc(db, 'votes', docSnap.id)); });
+  });
+</script>
 </body>
 </html>
