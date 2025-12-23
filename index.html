@@ -107,32 +107,48 @@
   ❤️ Gemacht als Weihnachtsüberraschung für die Familie
 </footer>
 
-<script>
-  function saveVote(event) {
-    event.preventDefault();
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBt5gN3qzxY8g9RALFca9XbuD_0b4UeOx8",
+    authDomain: "topgolf-termin.firebaseapp.com",
+    projectId: "topgolf-termin",
+    storageBucket: "topgolf-termin.firebasestorage.app",
+    messagingSenderId: "736208185374",
+    appId: "1:736208185374:web:291e91bbb7538376e0e60f"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const form = document.querySelector('form');
+  const votesList = document.getElementById('votes');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
     const name = document.getElementById('name').value;
     const date = document.querySelector('input[name="date"]:checked').value;
 
-    const votes = JSON.parse(localStorage.getItem('votes') || '[]');
-    votes.push({ name, date });
-    localStorage.setItem('votes', JSON.stringify(votes));
-
-    renderVotes();
-    event.target.reset();
-  }
-
-  function renderVotes() {
-    const votes = JSON.parse(localStorage.getItem('votes') || '[]');
-    const list = document.getElementById('votes');
-    list.innerHTML = '';
-    votes.forEach(vote => {
-      const li = document.createElement('li');
-      li.textContent = vote.name + ' → ' + vote.date;
-      list.appendChild(li);
+    await addDoc(collection(db, 'votes'), {
+      name,
+      date,
+      created: serverTimestamp()
     });
-  }
 
-  renderVotes();
+    form.reset();
+  });
+
+  const q = query(collection(db, 'votes'), orderBy('created'));
+  onSnapshot(q, (snapshot) => {
+    votesList.innerHTML = '';
+    snapshot.forEach(doc => {
+      const li = document.createElement('li');
+      li.textContent = doc.data().name + ' → ' + doc.data().date;
+      votesList.appendChild(li);
+    });
+  });
 </script>
 
 </body>
