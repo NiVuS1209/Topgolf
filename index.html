@@ -58,17 +58,7 @@
       <label>Dein Name:<br><input type="text" id="name" required style="padding:8px;border-radius:8px;border:none;margin:10px 0;width:100%;max-width:300px;"></label>
       <label>Neuen Termin hinzufügen:<br><input type="text" id="newDate" placeholder="z.B. 31. Januar"></label>
       <button type="button" id="addDate">Hinzufügen</button>
-      <div class="dates" id="datesContainer">
-        <div>
-          <label><input type="checkbox" name="dates" value="10. Januar"><span>10. Januar</span></label>
-        </div>
-        <div>
-          <label><input type="checkbox" name="dates" value="17. Januar"><span>17. Januar</span></label>
-        </div>
-        <div>
-          <label><input type="checkbox" name="dates" value="24. Januar"><span>24. Januar</span></label>
-        </div>
-      </div>
+      <div class="dates" id="datesContainer"></div>
       <button type="submit">Abstimmen</button>
     </form>
     <h3>📝 Bisherige Stimmen:</h3>
@@ -100,7 +90,8 @@
   const newDateInput = document.getElementById('newDate');
   const datesContainer = document.getElementById('datesContainer');
 
-  function createDateLabel(dateValue){
+  // Funktion zum Anzeigen eines Termins
+  function displayDate(dateValue){
     const container = document.createElement('div');
     const label = document.createElement('label');
     const checkbox = document.createElement('input');
@@ -116,25 +107,35 @@
     datesContainer.appendChild(container);
   }
 
-  addDateBtn.addEventListener('click', () => {
-    const dateValue = newDateInput.value.trim();
-    if (!dateValue) return;
-    createDateLabel(dateValue);
-    newDateInput.value = '';
+  // Termine aus Firebase laden
+  const datesQuery = query(collection(db,'dates'), orderBy('created'));
+  onSnapshot(datesQuery, snapshot=>{
+    datesContainer.innerHTML=''; // vorherige löschen
+    snapshot.forEach(docSnap=>{
+      displayDate(docSnap.data().name);
+    });
   });
 
-  form.addEventListener('submit', async (e) => {
+  // Neuen Termin hinzufügen
+  addDateBtn.addEventListener('click', async () => {
+    const dateValue = newDateInput.value.trim();
+    if(!dateValue) return;
+    await addDoc(collection(db,'dates'), {name: dateValue, created: serverTimestamp()});
+    newDateInput.value='';
+  });
+
+  // Abstimmen
+  form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const name = document.getElementById('name').value.trim();
-    const selectedDates = Array.from(document.querySelectorAll('input[name="dates"]:checked')).map(el => el.value);
-    if(selectedDates.length === 0){ alert('Bitte wähle mindestens einen Termin aus.'); return; }
+    const selectedDates = Array.from(document.querySelectorAll('input[name="dates"]:checked')).map(el=>el.value);
+    if(selectedDates.length===0){ alert('Bitte wähle mindestens einen Termin aus.'); return; }
 
-    const votesRef = collection(db, 'votes');
+    const votesRef = collection(db,'votes');
     const snapshot = await getDocs(votesRef);
     let existingDoc = null;
-
-    snapshot.forEach(docSnap => {
-      if(docSnap.data().name.toLowerCase() === name.toLowerCase()){
+    snapshot.forEach(docSnap=>{
+      if(docSnap.data().name.toLowerCase()===name.toLowerCase()){
         existingDoc = docSnap;
       }
     });
@@ -142,16 +143,17 @@
     if(existingDoc){
       const currentDates = existingDoc.data().dates || [];
       const newDates = Array.from(new Set([...currentDates,...selectedDates]));
-      await updateDoc(doc(db,'votes',existingDoc.id),{dates:newDates});
+      await updateDoc(doc(db,'votes',existingDoc.id), {dates:newDates});
     } else {
-      await addDoc(votesRef,{name,dates:selectedDates,created:serverTimestamp()});
+      await addDoc(votesRef, {name, dates:selectedDates, created:serverTimestamp()});
     }
 
     form.reset();
   });
 
-  const q = query(collection(db,'votes'),orderBy('created'));
-  onSnapshot(q,(snapshot)=>{
+  // Abstimmungen anzeigen und löschen
+  const votesQuery = query(collection(db,'votes'), orderBy('created'));
+  onSnapshot(votesQuery, snapshot=>{
     votesList.innerHTML='';
     snapshot.forEach(docSnap=>{
       const data = docSnap.data();
@@ -171,9 +173,10 @@
   });
 
   const video = document.getElementById('bgVideo');
-  video.src = 'deinvideo.mp4';
-  video.muted = true;
+  video.src='deinvideo.mp4';
+  video.muted=true;
   video.play();
+
 </script>
 
 </body>
