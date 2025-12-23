@@ -81,8 +81,10 @@
   onSnapshot(q, (snapshot) => {
     votesList.innerHTML = '';
     snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      const datesArray = Array.isArray(data.dates) ? data.dates : [];
       const li = document.createElement('li');
-      li.textContent = docSnap.data().name + ' → ' + docSnap.data().dates.join(', ');
+      li.textContent = data.name + ' → ' + datesArray.join(', ');
       votesList.appendChild(li);
     });
   });
