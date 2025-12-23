@@ -123,22 +123,25 @@
     snapshot.forEach(async (docSnap) => { await deleteDoc(doc(db, 'votes', docSnap.id)); });
   });
 
-  // Hintergrundvideo Ping-Pong
+  // Hintergrundvideo Ping-Pong stabil
   const video = document.getElementById('bgVideo');
-  video.src = 'Topgolf.mp4'; // Hier dein Video einfügen
+  video.src = 'deinvideo.mp4'; // Hier dein Video einfügen
+  video.muted = true;
   video.play();
 
   let forward = true;
-  video.addEventListener('timeupdate', () => {
-    if (forward && video.currentTime >= video.duration) {
-      forward = false;
-    } else if (!forward && video.currentTime <= 0) {
-      forward = true;
+  video.addEventListener('loadedmetadata', () => {
+    function pingPong() {
+      if (forward) {
+        video.currentTime += 0.03;
+        if (video.currentTime >= video.duration) forward = false;
+      } else {
+        video.currentTime -= 0.03;
+        if (video.currentTime <= 0) forward = true;
+      }
+      requestAnimationFrame(pingPong);
     }
-
-    if (!forward) {
-      video.currentTime -= 0.03;
-    }
+    requestAnimationFrame(pingPong);
   });
 </script>
 
